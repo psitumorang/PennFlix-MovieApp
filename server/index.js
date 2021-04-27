@@ -21,11 +21,11 @@ app.get('/keywords', routes.getTop20Keywords);
 
 
 /* ---- Q1b (Dashboard) ---- */
-app.get('/keywords/:keyword', routes.getTopMoviesWithKeyword);
+app.get('/movies', routes.getTopMovies);
 
 
 /* ---- Q2 (Recommendations) ---- */
-// check if the uid portion is correct 
+// check if the uid portion is correct
 app.get('/recs/:movieName', routes.getRecs);
 
 /* ---- (Best Movies) ---- */

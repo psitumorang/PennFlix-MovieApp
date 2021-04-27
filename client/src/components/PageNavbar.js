@@ -1,5 +1,8 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Logo from './logo.png';
+
+console.log(Logo);
 
 export default class PageNavbar extends React.Component {
 	constructor(props) {
@@ -36,6 +39,7 @@ export default class PageNavbar extends React.Component {
 			        	{this.state.navDivs}
 			        </div>
 			      </div>
+					<img src={Logo} alt="website logo" width="160" height="130"/>
 			    </nav>
 			</div>
     );
