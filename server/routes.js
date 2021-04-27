@@ -12,7 +12,7 @@ const connection = mysql.createPool(config);
 /* ---- Q1a (Dashboard) ---- */
 // Equivalent to: function getTop20Keywords(req, res) {}
 const getTop20Keywords = (req, res) => {
-var query = 'SELECT movie_title as name, poster_path as path FROM movies ORDER BY vote_average DESC, movie_title LIMIT 10;'; 
+var query = 'SELECT movie_title as name, poster_path as path FROM movies ORDER BY vote_average DESC, movie_title LIMIT 12;'; 
 //  var query = 'SELECT kwd_name FROM movie_keyword GROUP BY kwd_name ORDER BY COUNT(movie_id) DESC LIMIT 20;';
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
