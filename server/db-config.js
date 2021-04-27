@@ -4,12 +4,3 @@ module.exports = {
 	password: "adminpass",
 	database: "moviedb"
   };
-  
-
-// module.exports = {
-// 	host: "localhost",
-// 	user: "root",
-// 	password: "jdy121900",
-// 	port: "3306",
-// 	database: "cis550_hw2"
-// };

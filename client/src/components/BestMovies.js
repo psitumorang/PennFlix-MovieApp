@@ -106,7 +106,7 @@ export default class BestMovies extends React.Component {
 		return (
 			<div className="BestMovies">
 				
-				<PageNavbar active="bestgenres" />
+				<PageNavbar active="bestmovies" />
 
 				<div className="container bestmovies-container">
 					<div className="jumbotron">

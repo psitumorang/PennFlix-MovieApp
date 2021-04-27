@@ -8,6 +8,8 @@ import Dashboard from './Dashboard';
 import Recommendations from './Recommendations';
 import BestMovies from './BestMovies';
 import Companies from './Companies';
+import Filter from './Filter';
+import Actors from './Actors';
 
 export default class App extends React.Component {
 
@@ -37,6 +39,14 @@ export default class App extends React.Component {
 						<Route
 							path="/companies"
 							render={() => <Companies />}
+						/>
+						<Route
+							path="/filter"
+							render={() => <Filter />}
+						/>
+						<Route
+							path="/actors"
+							render={() => <Actors />}
 						/>
 					</Switch>
 				</Router>
