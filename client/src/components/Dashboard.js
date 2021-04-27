@@ -13,6 +13,7 @@ export default class Dashboard extends React.Component {
     // and a list of movies for a specified keyword.
     this.state = {
       keywords: [],
+      posters: [],
       movies: []
     };
 
@@ -44,9 +45,15 @@ export default class Dashboard extends React.Component {
         /> 
       );
 
+      const posterDivs = keywordsList.map((keywordObj, i) => 
+        <img src={"https://www.themoviedb.org/t/p/w200"+keywordObj.path} alt={keywordObj.name} title={keywordObj.name} />
+      );
+
+
       // Set the state of the keywords list to the value returned by the HTTP response from the server.
       this.setState({
-        keywords: keywordsDivs
+        keywords: keywordsDivs,
+        posters : posterDivs
       });
     }, err => {
       // Print the error if there is one.
@@ -92,9 +99,10 @@ export default class Dashboard extends React.Component {
         <br />
         <div className="container movies-container">
           <div className="jumbotron">
-            <div className="h5">Keywords</div>
+            <div className="h5">Trending Movies</div>
             <div className="keywords-container">
               {this.state.keywords}
+              {this.state.posters}
             </div>
           </div>
 
