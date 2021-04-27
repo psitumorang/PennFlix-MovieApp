@@ -7,6 +7,7 @@ import {
 import Dashboard from './Dashboard';
 import Recommendations from './Recommendations';
 import BestMovies from './BestMovies';
+import Companies from './Companies';
 
 export default class App extends React.Component {
 
@@ -32,6 +33,10 @@ export default class App extends React.Component {
 						<Route
 							path="/bestmovies"
 							render={() => <BestMovies />}
+						/>
+						<Route
+							path="/companies"
+							render={() => <Companies />}
 						/>
 					</Switch>
 				</Router>
