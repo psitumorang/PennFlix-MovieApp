@@ -9,30 +9,28 @@ const connection = mysql.createPool(config);
 /* -------------------------------------------------- */
 
 
-/* ---- Q1a (Dashboard) ---- */
-// Equivalent to: function getTop20Keywords(req, res) {}
+// Dashboard
 const getTop20Keywords = (req, res) => {
-var query = 'SELECT movie_title as name, poster_path as path FROM movies ORDER BY vote_average DESC, movie_title LIMIT 10;'; 
-//  var query = 'SELECT kwd_name FROM movie_keyword GROUP BY kwd_name ORDER BY COUNT(movie_id) DESC LIMIT 20;';
-  connection.query(query, function(err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
+  var query = `WITH intermediate AS (SELECT m.movie_id, m.movie_title as movie, m.overview, m.poster_path as path FROM movies m
+    WHERE m.vote_count > (SELECT AVG(vote_count) FROM movies)
+    ORDER BY m.vote_average DESC, m.movie_title LIMIT 10)
+    SELECT m.movie, m.overview, g.genre, m.path, m.movie_id FROM intermediate m JOIN movie_genre mg ON mg.movie_id = m.movie_id JOIN genre g ON g.genre_id = mg.genre_id GROUP BY m.movie;`;
+      connection.query(query, function(err, rows, field) {
+        if (err) console.log(err);
+        else {
+          console.log(rows);
+          res.json(rows);
+        }
+      });
+    };
 
-
-/* ---- Q1b (Dashboard) ---- */
 const getTopMoviesWithKeyword = (req, res) => {
   var keyword = req.params.keyword;
-  var query = `
-  WITH tmp AS (SELECT * FROM movie_keyword mk WHERE mk.kwd_name = '${keyword}')
-  SELECT movie.title, movie.rating, movie.num_ratings FROM tmp, movie WHERE tmp.movie_id = movie.movie_id 
-  ORDER BY movie.rating DESC, movie.num_ratings DESC
-  LIMIT 10;
-  `;
+var query = `WITH highest_ranked AS (SELECT movie_id, movie_title, vote_average FROM movies
+             ORDER BY vote_average DESC LIMIT 600), highest_rev AS (SELECT movie_id, movie_title, revenue FROM movies
+             ORDER BY revenue DESC LIMIT 600), movie_keywords AS (SELECT m.movie_id, k.keyword FROM movies m JOIN about a ON m.movie_id = a.movie_id
+             JOIN keyword k ON k.keyword_id = a.keyword_id)
+             SELECT DISTINCT keyword FROM movie_keywords LIMIT 10;`;
   connection.query(query, function(err, rows, field) {
     if (err) console.log(err);
     else {

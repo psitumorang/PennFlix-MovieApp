@@ -19,8 +19,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 // routes.getTop20Keywords, specified in routes.js.
 app.get('/keywords', routes.getTop20Keywords);
 
-
-/* ---- Q1b (Dashboard) ---- */
 app.get('/keywords/:keyword', routes.getTopMoviesWithKeyword);
 
 

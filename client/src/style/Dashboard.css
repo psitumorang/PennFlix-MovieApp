@@ -7,16 +7,18 @@
 }
 
 .keywords-container .keyword {
-  flex: 1 0 20%;
+  /* flex: 1 0 20%; */
   margin: 5px 0;
   padding: 10px;
   cursor: pointer;
+  /* align-items: center; */
   box-sizing: border-box;
+  flex-flow: row nowrap;
 }
 
 .keywords-container .keyword:hover {
   background-color: #ddd;
-}
+}z
 
 .movies-container .movies-header, .results-container .movie {
   display: flex;

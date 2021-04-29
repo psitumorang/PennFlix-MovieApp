@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import PageNavbar from './PageNavbar';
 import KeywordButton from './KeywordButton';
 import DashboardMovieRow from './DashboardMovieRow';
+import ReactPlayer from 'react-player';
 
 export default class Dashboard extends React.Component {
   constructor(props) {
@@ -13,11 +14,12 @@ export default class Dashboard extends React.Component {
     // and a list of movies for a specified keyword.
     this.state = {
       keywords: [],
-      posters: [],
-      movies: []
+      movies: [],
     };
 
+    this.trailer="";
     this.showMovies = this.showMovies.bind(this);
+    this.showTrailer = this.showTrailer.bind(this);
   };
 
   // React function that is called when the page load.
@@ -39,21 +41,19 @@ export default class Dashboard extends React.Component {
       // A button which triggers the showMovies function for each keyword.
       const keywordsDivs = keywordsList.map((keywordObj, i) =>
         <KeywordButton 
-          id={"button-" + keywordObj.name} 
-          onClick={() => this.showMovies(keywordObj.name)} 
-          keyword={keywordObj.name} 
+          id={"button-" + keywordObj.movie_id} 
+          // TODO: implment onClick() behavior
+          // onClick={() => this.showMovies(keywordObj.movie)} 
+          title={keywordObj.movie} 
+          genre={keywordObj.genre}
+          overview={keywordObj.overview}
+          path={keywordObj.path}
         /> 
       );
 
-      const posterDivs = keywordsList.map((keywordObj, i) => 
-        <img src={"https://www.themoviedb.org/t/p/w200"+keywordObj.path} alt={keywordObj.name} title={keywordObj.name} />
-      );
-
-
       // Set the state of the keywords list to the value returned by the HTTP response from the server.
       this.setState({
-        keywords: keywordsDivs,
-        posters : posterDivs
+        keywords: keywordsDivs
       });
     }, err => {
       // Print the error if there is one.
@@ -61,8 +61,11 @@ export default class Dashboard extends React.Component {
     });
   };
 
-  /* ---- Q1b (Dashboard) ---- */
-  /* Set this.state.movies to a list of <DashboardMovieRow />'s. */
+  // TODO: implement click functionality 
+  showTrailer() {
+    console.log("blah");
+  }
+
   showMovies(keyword) {
     var url = "http://localhost:3000/keywords/" + keyword;
     console.log(url);
@@ -76,10 +79,10 @@ export default class Dashboard extends React.Component {
       }).then(moviesList => {
         if (!moviesList) return;
         const moviesDivs = moviesList.map((movieObj, i) =>
-          <DashboardMovieRow
-          title={movieObj.title}
-          rating={movieObj.rating}
-          votes={movieObj.num_ratings}
+        <DashboardMovieRow
+            movie = {movieObj.keyword}
+            overview = {movieObj.overview}
+            genre = {movieObj.genre}
           />
         );
       this.setState({
@@ -99,20 +102,18 @@ export default class Dashboard extends React.Component {
         <br />
         <div className="container movies-container">
           <div className="jumbotron">
-            <div className="h5">Trending Movies</div>
+            <div className="h5">Top Movies</div>
             <div className="keywords-container">
               {this.state.keywords}
-              {this.state.posters}
             </div>
           </div>
-
           <br />
           <div className="jumbotron">
             <div className="movies-container">
               <div className="movies-header">
-                <div className="header-lg"><strong>Title</strong></div>
-                <div className="header"><strong>Rating</strong></div>
-                <div className="header"><strong>Vote Count</strong></div>
+                <div className="header-lg"><strong>Trending Keywords</strong></div>
+                {/* <div className="header"><strong>Rating</strong></div>
+                <div className="header"><strong>Vote Count</strong></div> */}
               </div>
               <div className="results-container" id="results">
                 {this.state.movies}

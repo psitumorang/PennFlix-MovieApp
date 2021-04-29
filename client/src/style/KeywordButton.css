@@ -1,0 +1,14 @@
+.moviebutton-container {
+    display: flex;
+    height: 230px;
+    flex-flow: row nowrap;
+}
+
+.flex-child-left {
+    flex: 1 0 23%;
+}
+
+/* TODO: fix text alignment issue */
+.flex-child-right {
+    margin-right: 40px;
+}
