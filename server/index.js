@@ -19,14 +19,15 @@ app.use(bodyParser.urlencoded({extended: false}));
 // routes.getTop20Keywords, specified in routes.js.
 app.get('/keywords', routes.getTop20Keywords);
 
-
 /* ---- Q1b (Dashboard) ---- */
 app.get('/movies', routes.getTopMovies);
 
-
 /* ---- Q2 (Recommendations) ---- */
 // check if the uid portion is correct
-app.get('/recs/:movieName', routes.getRecs);
+app.get('/keywordsDropdown', routes.getKeywords);
+
+//get movie recommendations based on keyword search
+app.get('/recs/:keyword', routes.getRecs);
 
 /* ---- (Best Movies) ---- */
 app.get('/decades', routes.getDecades);

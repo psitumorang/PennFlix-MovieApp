@@ -67,12 +67,3 @@
 .movies-header .header, .movie .rating, .movie .votes {
   flex: 1 0 25%;
 }
-
-
-.movie .title, .movies-header .header-lg {
-  flex: 1 0 50%;
-}
-
-.movies-header .header, .movie .rating, .movie .votes {
-  flex: 1 0 25%;
-}

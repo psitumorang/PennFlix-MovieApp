@@ -13,10 +13,14 @@ const connection = mysql.createPool(config);
 // Equivalent to: function getTop20Keywords(req, res) {}
 const getTop20Keywords = (req, res) => {
 var query = `WITH highest_ranked AS (SELECT movie_id, movie_title, vote_average FROM movies
-             ORDER BY vote_average DESC LIMIT 600), highest_rev AS (SELECT movie_id, movie_title, revenue FROM movies
-             ORDER BY revenue DESC LIMIT 600), movie_keywords AS (SELECT m.movie_id, k.keyword FROM movies m JOIN about a ON m.movie_id = a.movie_id
-             JOIN keyword k ON k.keyword_id = a.keyword_id)
-             SELECT DISTINCT keyword FROM movie_keywords LIMIT 10;`;
+             ORDER BY vote_average DESC LIMIT 600),
+             highest_rev AS (SELECT movie_id, movie_title, revenue
+             FROM movies
+             ORDER BY revenue DESC LIMIT 600),
+movie_keywords AS (SELECT m.movie_id, k.keyword FROM movies m
+JOIN about a ON m.movie_id = a.movie_id
+JOIN keyword k ON k.keyword_id = a.keyword_id) SELECT keyword FROM movie_keywords
+WHERE movie_id IN (SELECT movie_id FROM highest_rev) AND movie_id IN (SELECT movie_id FROM highest_ranked);`;
 
 //'SELECT movie_title as movie, vote_average as rating FROM movies ORDER BY vote_average DESC, movie_title LIMIT 10;
 //  var query = 'SELECT kwd_name FROM movie_keyword GROUP BY kwd_name ORDER BY COUNT(movie_id) DESC LIMIT 20;';
@@ -31,10 +35,10 @@ var query = `WITH highest_ranked AS (SELECT movie_id, movie_title, vote_average 
 
 /* ---- Q1b (Dashboard) ---- */
 const getTopMovies = (req, res) => {
-  var query = `WITH intermediate AS (SELECT m.movie_id, m.movie_title as movie, m.overview FROM movies m
-WHERE m.vote_count > (SELECT AVG(vote_count) FROM movies)
-ORDER BY m.vote_average DESC, m.movie_title LIMIT 10)
-SELECT m.movie, m.overview, g.genre FROM intermediate m JOIN movie_genre mg ON mg.movie_id = m.movie_id JOIN genre g ON g.genre_id = mg.genre_id GROUP BY m.movie;`;
+  var query = `WITH intermediate AS (SELECT m.movie_id, m.movie_title as movie, m.overview, m.vote_average as rating FROM movies m
+               WHERE m.vote_count > (SELECT AVG(vote_count) FROM movies)
+               ORDER BY m.vote_average DESC, m.movie_title LIMIT 10)
+               SELECT m.movie, m.overview, g.genre, m.rating FROM intermediate m JOIN movie_genre mg ON mg.movie_id = m.movie_id JOIN genre g ON g.genre_id = mg.genre_id GROUP BY m.movie;`;
   // SELECT m.movie_title as movie, m.overview
   //              FROM movies m JOIN movie_genre mg ON mg.movie_id = m.movie_id
   //              JOIN genre g ON g.genre_id = mg.genre_id
@@ -50,15 +54,38 @@ SELECT m.movie, m.overview, g.genre FROM intermediate m JOIN movie_genre mg ON m
 
 
 /* ---- Q2 (Recommendations) ---- */
+const getKeywords = (req, res) => {
+var query = `WITH highest_ranked AS (SELECT movie_id, movie_title, vote_average FROM movies
+             ORDER BY vote_average DESC LIMIT 600),
+             highest_rev AS (SELECT movie_id, movie_title, revenue
+             FROM movies ORDER BY revenue DESC LIMIT 600),
+             movie_keywords AS (SELECT m.movie_id, k.keyword, m.vote_average FROM movies m
+             JOIN about a ON m.movie_id = a.movie_id
+             JOIN keyword k ON k.keyword_id = a.keyword_id) SELECT keyword FROM movie_keywords
+             WHERE movie_id IN (SELECT movie_id FROM highest_ranked) ORDER BY vote_average DESC, keyword LIMIT 30;`;
+
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      console.log(rows);
+      res.json(rows);
+    }
+  });
+};
+
 const getRecs = (req, res) => {
-  var movieName = req.params.movieName;
-  var query = `
-  WITH tmp AS (SELECT m.movie_id, ci.cast_id, ci.charac FROM movie m JOIN cast_in ci ON m.movie_id = ci.movie_id WHERE m.title = '${movieName}'),
-  tmp2 AS (SELECT cast_in.movie_id, COUNT(tmp.cast_id) AS cast_count FROM tmp, cast_in
-  WHERE tmp.cast_id = cast_in.cast_id AND cast_in.movie_id NOT IN (SELECT movie_id FROM tmp) GROUP BY cast_in.movie_id)
-  SELECT m.title, m.movie_id, m.rating, m.num_ratings FROM movie m, tmp2 WHERE m.movie_id = tmp2.movie_id
-  ORDER BY tmp2.cast_count DESC, m.rating DESC, m.num_ratings DESC LIMIT 10;
-  `;
+  var keyword = req.params.keyword;
+  var query =   `WITH movie_keywords AS (SELECT m.movie_title, k.keyword FROM movies m JOIN about ab ON
+  		           m.movie_id = ab.movie_id JOIN keyword k ON ab.keyword_id = k.keyword_id),
+                 rec_movie AS (SELECT m.movie_title, m.overview, mk.keyword, m.vote_average FROM movies m JOIN movie_keywords mk ON m.movie_title = mk.movie_title WHERE mk.keyword LIKE '%${keyword}%'),
+  		           movie_genres AS (SELECT m.movie_id, m.movie_title as title, m.overview, m.vote_average, g.genre FROM movies m JOIN movie_genre mg ON mg.movie_id = m.movie_id JOIN genre g ON g.genre_id = mg.genre_id GROUP BY m.movie_id)
+                 SELECT m.movie_title as title, m.overview, m.vote_average as rating, g.genre, CONCAT(CONCAT('https://www.youtube.com/results?search_query=', REPLACE(m.movie_title, " ", "+")), '+trailer') as query
+                 FROM rec_movie m
+                 JOIN movie_genres g ON m.movie_title = g.title
+                 WHERE m.vote_average <= 10
+                 GROUP BY m.movie_title
+                 ORDER BY m.vote_average DESC, m.movie_title
+                 LIMIT 10;`;
   connection.query(query, function(err, rows, field) {
     if (err) console.log(err);
     else {
@@ -123,7 +150,8 @@ const bestMoviesPerDecadeGenre = (req, res) => {
 module.exports = {
 	getTop20Keywords: getTop20Keywords,
 	getTopMovies: getTopMovies,
-	getRecs: getRecs,
+	getKeywords: getKeywords,
+  getRecs: getRecs,
   getDecades: getDecades,
   getGenres: getGenres,
   bestMoviesPerDecadeGenre: bestMoviesPerDecadeGenre
