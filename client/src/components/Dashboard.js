@@ -45,8 +45,7 @@ export default class Dashboard extends React.Component {
         <MovieButton
           id={"button-" + keywordObj.movie_id} 
           // TODO: implment onClick() behavior
-          // onClick={() => this.showMovies(keywordObj.movie)} 
-          //keyword={keywordObj.movie}
+          onClick={() => this.showMovies(keywordObj.movie)} 
           title={keywordObj.movie} 
           genre={keywordObj.genre}
           overview={keywordObj.overview}
@@ -70,7 +69,7 @@ export default class Dashboard extends React.Component {
   }
 
   showMovies(keyword) {
-    var url = "http://localhost:3000/keywords/" + keyword;
+    var url = "http://localhost:8081/keywords/" + keyword;
     console.log(url);
     fetch(url,
       {
@@ -83,9 +82,8 @@ export default class Dashboard extends React.Component {
         if (!moviesList) return;
         const moviesDivs = moviesList.map((movieObj, i) =>
         <DashboardMovieRow
-            movie = {movieObj.keyword}
-            overview = {movieObj.overview}
-            genre = {movieObj.genre}
+            movie = {movieObj.name}
+            overview = {movieObj.profile_path}
           />
         );
       this.setState({
@@ -114,7 +112,7 @@ export default class Dashboard extends React.Component {
           <div className="jumbotron">
             <div className="movies-container">
               <div className="movies-header">
-                <div className="header-lg"><strong>Top Keywords</strong></div>
+              <div className="h5"> Who's in it? </div>
                 {/* <div className="header"><strong>Rating</strong></div>
                 <div className="header"><strong>Vote Count</strong></div> */}
               </div>

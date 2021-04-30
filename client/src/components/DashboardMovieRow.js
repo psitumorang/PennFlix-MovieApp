@@ -1,16 +1,15 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import '../style/DashboardMovieRow.css';
 
 export default class DashboardMovieRow extends React.Component {
 
-	/* ---- Q1b (Dashboard) ---- */
-	/* Change the contents (NOT THE STRUCTURE) of the HTML elements to show a movie row. */
 	render() {
 		return (
-			<div className="movie">
-			<div className="movie">{this.props.movie}</div>
-			<div className="overview">{this.props.overview}</div>
-			<div className="genre">{this.props.genre}</div>
+			<div class='profile-container'>
+				{this.props.movie}
+				<img src={"https://www.themoviedb.org/t/p/w200"+this.props.overview} 
+			 			  alt = {this.props.title} width="160" height="230" />
 			</div>
 		);
 	};

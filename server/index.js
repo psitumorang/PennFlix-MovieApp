@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.get('/keywords', routes.getTop20Keywords);
 
 /* ---- Q1b (Dashboard) ---- */
-app.get('/movies', routes.getTopMovies);
+app.get('/keywords/:keyword', routes.getTopMovies);
 
 /* ---- Q2 (Recommendations) ---- */
 // check if the uid portion is correct

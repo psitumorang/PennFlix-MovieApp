@@ -5,7 +5,7 @@
 }
 
 .flex-child-left {
-    display: flex;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   flex-basis: 100%;
@@ -14,7 +14,6 @@
   height: 100px;
 }
 
-/* TODO: fix text alignment issue */
 .flex-child-right {
     display: flex;
   flex-direction: column;
