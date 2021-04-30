@@ -63,11 +63,11 @@ var query = `WITH highest_ranked AS (SELECT movie_id, movie_title, vote_average 
 
 const getRecs = (req, res) => {
   var keyword = req.params.keyword;
-  var query =   `WITH movie_keywords AS (SELECT m.movie_title, k.keyword FROM movies m JOIN about ab ON
+  var query =   `WITH movie_keywords AS (SELECT m.movie_id, m.movie_title, k.keyword FROM movies m JOIN about ab ON
   		           m.movie_id = ab.movie_id JOIN keyword k ON ab.keyword_id = k.keyword_id),
-                 rec_movie AS (SELECT m.poster_path, m.movie_title, m.overview, mk.keyword, m.vote_average FROM movies m JOIN movie_keywords mk ON m.movie_title = mk.movie_title WHERE mk.keyword LIKE '%${keyword}%'),
+                 rec_movie AS (SELECT m.movie_id, m.poster_path, m.movie_title, m.overview, mk.keyword, m.vote_average FROM movies m JOIN movie_keywords mk ON m.movie_title = mk.movie_title WHERE mk.keyword LIKE '%${keyword}%'),
   		           movie_genres AS (SELECT m.movie_id, m.movie_title as title, m.overview, m.vote_average, g.genre FROM movies m JOIN movie_genre mg ON mg.movie_id = m.movie_id JOIN genre g ON g.genre_id = mg.genre_id GROUP BY m.movie_id)
-                 SELECT m.poster_path as path, m.movie_title as title, m.overview, m.vote_average as rating, g.genre, CONCAT(CONCAT('https://www.youtube.com/results?search_query=', REPLACE(m.movie_title, " ", "+")), '+trailer') as query
+                 SELECT m.movie_id as id, m.poster_path as path, m.movie_title as title, m.overview, m.vote_average as rating, g.genre, CONCAT(CONCAT('https://www.youtube.com/results?search_query=', REPLACE(m.movie_title, " ", "+")), '+trailer') as query
                  FROM rec_movie m
                  JOIN movie_genres g ON m.movie_title = g.title
                  WHERE m.vote_average <= 10
@@ -99,19 +99,22 @@ const getDecades = (req, res) => {
 
 /* ---- (Best Movies) ---- */
 const getGenres = (req, res) => {
-  const query = `
-    SELECT name
-    FROM genre
-    WHERE name <> 'genres'
-    ORDER BY name ASC;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
+  var movie_id = req.params.movie_id;
+  var query = `WITH intermediate AS (SELECT m.movie_id, m.movie_title as movie, m.overview, m.vote_average as rating FROM movies m)
+               SELECT DISTINCT g.genre
+               FROM intermediate m
+               JOIN movie_genre mg ON mg.movie_id = m.movie_id
+               JOIN genre g ON g.genre_id = mg.genre_id
+               WHERE m.movie_id = ${movie_id}
+               ORDER BY g.genre;`;
+  connection.query(query, function(err, rows, field) {
     if (err) console.log(err);
-    else res.json(rows);
+    else {
+      console.log(rows);
+      res.json(rows);
+    }
   });
 };
-
 
 /* ---- Q3b (Best Movies) ---- */
 const bestMoviesPerDecadeGenre = (req, res) => {

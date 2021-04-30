@@ -31,7 +31,7 @@ app.get('/recs/:keyword', routes.getRecs);
 
 /* ---- (Best Movies) ---- */
 app.get('/decades', routes.getDecades);
-app.get('/genres', routes.getGenres);
+app.get('/genres/:movie_id', routes.getGenres);
 
 
 /* ---- Q3b (Best Movies) ---- */
