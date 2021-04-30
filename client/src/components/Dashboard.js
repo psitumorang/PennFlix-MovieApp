@@ -3,10 +3,10 @@ import '../style/Dashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PageNavbar from './PageNavbar';
 import KeywordButton from './KeywordButton';
+import MovieButton from './MovieButton';
 import DashboardMovieRow from './DashboardMovieRow';
 import Logo from './logo.png';
 
-console.log(Logo);
 
 export default class Dashboard extends React.Component {
   constructor(props) {
@@ -15,18 +15,15 @@ export default class Dashboard extends React.Component {
     // The state maintained by this React Component. This component maintains the list of keywords,
     // and a list of movies for a specified keyword.
     this.state = {
-      posters: [],
       keywords: [],
       movies: [],
-      genres: [],
-      titles: [],
-      overviews: []
     };
 
+    this.trailer="";
     this.showMovies = this.showMovies.bind(this);
+    this.showTrailer = this.showTrailer.bind(this);
   };
 
-  // React function that is called when the page load.
   // React function that is called when the page load.
   componentDidMount() {
     // Send an HTTP request to the server.
@@ -45,45 +42,35 @@ export default class Dashboard extends React.Component {
       // Map each keyword in this.state.keywords to an HTML element:
       // A button which triggers the showMovies function for each keyword.
       const keywordsDivs = keywordsList.map((keywordObj, i) =>
-        <KeywordButton
-          id={"button-" + keywordObj.keyword}
-          //onClick={() => this.showMovies(keywordObj.keyword)}
-          keyword={keywordObj.keyword}
-        />
+        <MovieButton
+          id={"button-" + keywordObj.movie_id} 
+          // TODO: implment onClick() behavior
+          // onClick={() => this.showMovies(keywordObj.movie)} 
+          //keyword={keywordObj.movie}
+          title={keywordObj.movie} 
+          genre={keywordObj.genre}
+          overview={keywordObj.overview}
+          path={keywordObj.path}
+        /> 
       );
-
-  //     // Set the state of the keywords list to the value returned by the HTTP response from the server.
-  //     this.setState({
-  //       keywords: keywordsDivs
-  //     });
-  //     this.showMovies();
-  //   }, err => {
-  //     // Print the error if there is one.
-  //     console.log(err);
-  //   });
-  // };
-
-      // const posterDivs = keywordsList.map((keywordObj, i) =>
-      //   <img src={"https://www.themoviedb.org/t/p/w200"+keywordObj.path} alt={keywordObj.name} title={keywordObj.name} />
-      // );
-
 
       // Set the state of the keywords list to the value returned by the HTTP response from the server.
       this.setState({
-        keywords: keywordsDivs,
-        // posters : posterDivs
+        keywords: keywordsDivs
       });
-      this.showMovies();
     }, err => {
       // Print the error if there is one.
       console.log(err);
     });
   };
 
-  /* ---- Q1b (Dashboard) ---- */
-  /* Set this.state.movies to a list of <DashboardMovieRow />'s. */
-  showMovies() {
-    var url = "http://localhost:8081/movies/";
+  // TODO: implement click functionality 
+  showTrailer() {
+    console.log("blah");
+  }
+
+  showMovies(keyword) {
+    var url = "http://localhost:3000/keywords/" + keyword;
     console.log(url);
     fetch(url,
       {
@@ -95,27 +82,21 @@ export default class Dashboard extends React.Component {
       }).then(moviesList => {
         if (!moviesList) return;
         const moviesDivs = moviesList.map((movieObj, i) =>
-          <DashboardMovieRow
-            movie = {movieObj.movie}
+        <DashboardMovieRow
+            movie = {movieObj.keyword}
             overview = {movieObj.overview}
             genre = {movieObj.genre}
           />
         );
-        const movie = moviesList.map((movieObj, i) => movieObj.movie);
-        const overview = moviesList.map((movieObj, i) => movieObj.overview);
-        const genre = moviesList.map((movieObj, i) => movieObj.genre);
       this.setState({
-        movies: moviesDivs,
-        titles: this.state.titles.concat(movie),
-        genres: this.state.genres.concat(genre),
-        overviews: this.state.overviews.concat(overview)
+        movies: moviesDivs
       });
     }, err => {
       console.log(err);
     });
   };
 
-  render() {
+  render() {    
     return (
       <div className="Dashboard">
 
@@ -124,253 +105,22 @@ export default class Dashboard extends React.Component {
         <br />
         <div className="container movies-container">
           <div className="jumbotron">
-            <div className="jumbotron-header">
-              <div className="h2">Top 10 Ranked Movies</div>
-              <br />
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[0]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[0]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[0]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[1]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[1]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[1]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[2]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[2]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[2]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[3]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[3]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[3]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[4]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[4]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[4]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[5]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[5]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[5]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[6]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[6]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[6]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[7]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[7]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[7]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[8]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[8]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[8]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
-                <br />
-                <br />
-
-                <div className="movies-container">
-                  <div class='row'>
-                    <div class='left-column'>
-                      <img src={Logo} alt="website logo" width="160" height="130"/>
-                    </div>
-                    <div class='right-column'>
-                      <div class='row'>
-                        {this.state.titles[9]}
-                      </div>
-                      <div class='row'>
-                        Genres: {this.state.genres[9]}
-                      </div>
-                      <br />
-                      <div class='row'>
-                        {this.state.overviews[9]}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          <br />
-
-          <div className="jumbotron">
-            <div className="h5">Top 10 Most Profitable Movie Keywords</div>
+            <div className="h5">Top Movies</div>
             <div className="keywords-container">
-               {this.state.keywords}
+              {this.state.keywords}
+            </div>
+          </div>
+          <br />
+          <div className="jumbotron">
+            <div className="movies-container">
+              <div className="movies-header">
+                <div className="header-lg"><strong>Top Keywords</strong></div>
+                {/* <div className="header"><strong>Rating</strong></div>
+                <div className="header"><strong>Vote Count</strong></div> */}
+              </div>
+              <div className="results-container" id="results">
+                {this.state.movies}
+              </div>
             </div>
           </div>
         </div>
@@ -378,3 +128,4 @@ export default class Dashboard extends React.Component {
     );
   };
 };
+
