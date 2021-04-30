@@ -5,10 +5,22 @@
 }
 
 .flex-child-left {
-    flex: 1 0 23%;
+    display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-basis: 100%;
+  flex: 0 25%;
+  width: 120px;
+  height: 100px;
 }
 
 /* TODO: fix text alignment issue */
 .flex-child-right {
-    margin-right: 40px;
+    display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-basis: 100%;
+  flex: 1;
+  width: 700px;
+  height: 100px;
 }

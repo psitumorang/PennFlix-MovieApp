@@ -65,6 +65,7 @@ export default class Recommendations extends React.Component {
 					genre = {movieObj.genre}
 					rating = {movieObj.rating}
 					query = {movieObj.query}
+					path= {movieObj.path}
 				/>
 			);
 			this.setState({

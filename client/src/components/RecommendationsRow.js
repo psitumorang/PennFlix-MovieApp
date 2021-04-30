@@ -13,7 +13,7 @@ export default class RecommendationsRow extends React.Component {
 				<div class='paddedRow'>
 
 					<div class='left-column'>
-						<img src={Logo} alt="website logo" width="160" height="130"/>
+						<img src={"https://m.media-amazon.com/images/M"+this.props.path} alt={this.props.title} width="160" height="230"/>
 					</div>
 
 					<div class='right-column'>

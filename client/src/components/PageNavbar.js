@@ -13,8 +13,9 @@ export default class PageNavbar extends React.Component {
 		};
 	};
 
+	// deleted best movies tab --> artificat of hw2 template file
 	componentDidMount() {
-		const pageList = ['dashboard', 'recommendations', 'bestmovies', 'companies', 'filter', 'actors'];
+		const pageList = ['dashboard', 'recommendations', 'filter', 'companies', 'actors'];
 
 		let navbarDivs = pageList.map((page, i) => {
 			if (this.props.active === page) {
